@@ -135,6 +135,32 @@ public class UsageStatsPlugin : FlutterPlugin, MethodCallHandler {
                 }
 
             }
+            "queryNetworkBuckets" -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    val start: Long = call.argument<Long>("start") as Long
+                    val end: Long = call.argument<Long>("end") as Long
+                    val type: Int = call.argument<Int>("type") as Int
+
+                    GlobalScope.launch(Dispatchers.Main) {
+                        val netResult = withContext(Dispatchers.IO) {
+                            NetworkStats.queryNetworkBuckets(
+                                context = mContext!!,
+                                startDate = start,
+                                endDate = end,
+                                type = type
+                            )
+                        }
+                        result.success(netResult)
+                    }
+                } else {
+                    result.error(
+                        "API Error",
+                        "Requires API Level 23",
+                        "Target should be set to 23 to use this API"
+                    )
+                }
+
+            }
             else -> {
                 result.notImplemented()
             }

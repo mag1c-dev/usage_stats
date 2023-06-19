@@ -102,6 +102,24 @@ class UsageStats {
     return result;
   }
 
+  static Future<List<dynamic>> queryNetworkBuckets(
+    DateTime startDate,
+    DateTime endDate, {
+    NetworkType networkType = NetworkType.all,
+  }) async {
+    int end = endDate.millisecondsSinceEpoch;
+    int start = startDate.millisecondsSinceEpoch;
+    Map<String, int> interval = {
+      'start': start,
+      'end': end,
+      'type': networkType.value,
+    };
+    dynamic events =
+        await _channel.invokeMethod('queryNetworkBuckets', interval);
+    print(events);
+    return events;
+  }
+
   static Future<NetworkInfo> queryNetworkUsageStatsByPackage(
     DateTime startDate,
     DateTime endDate, {
